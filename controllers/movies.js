@@ -51,8 +51,7 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  console.log(req.params);
-  Movie.findById(req.params.id)
+  Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным _id не найден.');
@@ -60,7 +59,7 @@ const deleteMovie = (req, res, next) => {
       if (movie.owner.toHexString() !== req.user._id) {
         throw new ForbiddenError('Недостаточно прав');
       }
-      Movie.findByIdAndRemove(req.params.movieId)
+      Movie.findByIdAndRemove(req.params._id)
         .then((removingMovie) => res.send({ removingMovie, message: 'Удалено' }));
     })
     // eslint-disable-next-line consistent-return
