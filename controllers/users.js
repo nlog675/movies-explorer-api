@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const NotFoundError = require('../utils/NotFoundError');
 const BadRequestError = require('../utils/BadRequestError');
@@ -60,6 +62,40 @@ const createUser = (req, res, next) => {
     });
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new UnauthorizedError('Неправильный логин или пароль');
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw new UnauthorizedError('Неправильный логин или пароль');
+          }
+          const token = jwt.sign(
+            { _id: user._id },
+            NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+            { expiresIn: '7d' },
+          );
+          res.cookie('jwt', token, {
+            maxAge: 3600000 * 24 * 7,
+            httpOnly: true,
+          })
+            .send({ email, message: 'Авторизация прошла успешно' });
+        });
+    })
+    .catch(next);
+};
+
+const logout = (req, res, next) => {
+  res.clearCookie('jwt')
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
-  getUser, updateProfile, createUser,
+  getUser, updateProfile, createUser, login, logout
 };

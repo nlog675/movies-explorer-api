@@ -22,9 +22,25 @@ const MovieValidation = celebrate({
     thumbnail: Joi.string().required().pattern(URL_REGEXP),
     movieId: Joi.number().required(),
   })
-})
+});
+
+const loginValidation = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+});
+
+const registerValidation = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+});
 
 module.exports = {
   userValidation,
-  MovieValidation
+  MovieValidation,
+  loginValidation,
+  registerValidation
 }
