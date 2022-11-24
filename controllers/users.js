@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -5,19 +7,21 @@ const User = require('../models/user');
 const NotFoundError = require('../utils/NotFoundError');
 const BadRequestError = require('../utils/BadRequestError');
 const ConflictError = require('../utils/ConflictError');
+const UnauthorizedError = require('../utils/UnauthorizedError');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
-  User.findById(req.params.userId).orFail(() => {
-    throw new NotFoundError('Пользователь по указанному _id не найден.');
-  })
-    .then((user) => res.send(user))
-    // eslint-disable-next-line consistent-return
-    .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        return next(new BadRequestError('Переданы некорректные данные при поске пользователя.'));
+  console.log(req);
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
-      next(err);
-    });
+    })
+    .catch((err) => next(err));
 };
 
 const updateProfile = (req, res, next) => {
@@ -90,12 +94,12 @@ const login = (req, res, next) => {
 };
 
 const logout = (req, res, next) => {
-  res.clearCookie('jwt')
+  res.clearCookie('jwt').send({ message: 'Успешный выход' })
     .catch((err) => {
       next(err);
     });
 };
 
 module.exports = {
-  getUser, updateProfile, createUser, login, logout
+  getUser, updateProfile, createUser, login, logout,
 };

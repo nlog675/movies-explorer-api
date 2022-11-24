@@ -5,10 +5,10 @@ const NotFoundError = require('../utils/NotFoundError');
 const ForbiddenError = require('../utils/ForbiddenError');
 
 const getMovies = (req, res, next) => Movie.find({})
-.then((movies) => {
-  res.status(200).send(movies);
-})
-.catch((err) => next(err));
+  .then((movies) => {
+    res.status(200).send(movies);
+  })
+  .catch((err) => next(err));
 
 const createMovie = (req, res, next) => {
   const {
@@ -23,7 +23,7 @@ const createMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     movieId,
-   } = req.body;
+  } = req.body;
   Movie.create({
     country,
     director,
@@ -37,7 +37,7 @@ const createMovie = (req, res, next) => {
     thumbnail,
     movieId,
     owner: req.user._id,
-   })
+  })
     .then((movie) => {
       res.send(movie);
     })
@@ -51,7 +51,8 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  console.log(req.params);
+  Movie.findById(req.params.id)
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Фильм с указанным _id не найден.');
@@ -60,7 +61,7 @@ const deleteMovie = (req, res, next) => {
         throw new ForbiddenError('Недостаточно прав');
       }
       Movie.findByIdAndRemove(req.params.movieId)
-        .then((removingMovie) => res.send(removingMovie));
+        .then((removingMovie) => res.send({ removingMovie, message: 'Удалено' }));
     })
     // eslint-disable-next-line consistent-return
     .catch((err) => {
