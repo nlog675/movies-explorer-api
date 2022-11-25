@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -12,7 +11,6 @@ const UnauthorizedError = require('../utils/UnauthorizedError');
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
-  console.log(req);
   User.findById(req.user._id)
     .then((user) => {
       if (user) {
