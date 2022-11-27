@@ -67,7 +67,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new ConflictError(ALREADY_EXISTS));
       }
-      next(err);
+      return next(err);
     });
 };
 
