@@ -30,12 +30,11 @@ const updateProfile = (req, res, next) => {
       throw new NotFoundError('Пользователь с указанным _id не найден.');
     })
     .then((updatedUser) => res.send(updatedUser))
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -52,7 +51,6 @@ const createUser = (req, res, next) => {
       delete newUser.password;
       return res.status(201).send(newUser);
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
@@ -60,7 +58,7 @@ const createUser = (req, res, next) => {
       if (err.code === 11000) {
         return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
       }
-      next(err);
+      return next(err);
     });
 };
 

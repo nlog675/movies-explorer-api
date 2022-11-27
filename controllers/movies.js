@@ -41,12 +41,11 @@ const createMovie = (req, res, next) => {
     .then((movie) => {
       res.send(movie);
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -62,12 +61,11 @@ const deleteMovie = (req, res, next) => {
       Movie.findByIdAndRemove(req.params._id)
         .then((removingMovie) => res.send({ removingMovie, message: 'Удалено' }));
     })
-    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные при удалении фильма.'));
       }
-      next(err);
+      return next(err);
     });
 };
 
