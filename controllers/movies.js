@@ -3,6 +3,12 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../utils/BadRequestError');
 const NotFoundError = require('../utils/NotFoundError');
 const ForbiddenError = require('../utils/ForbiddenError');
+const {
+  BAD_REQUEST_TEXT,
+  NOT_ALLOWED_TEXT,
+  NOT_FOUND_ID_TEXT,
+  DELETED_MESSAGE,
+} = require('../utils/constants');
 
 const getMovies = (req, res, next) => Movie.find({})
   .then((movies) => {
@@ -43,7 +49,7 @@ const createMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
+        return next(new BadRequestError(BAD_REQUEST_TEXT));
       }
       return next(err);
     });
@@ -53,17 +59,17 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Фильм с указанным _id не найден.');
+        throw new NotFoundError(NOT_FOUND_ID_TEXT);
       }
       if (movie.owner.toHexString() !== req.user._id) {
-        throw new ForbiddenError('Недостаточно прав');
+        throw new ForbiddenError(NOT_ALLOWED_TEXT);
       }
       Movie.findByIdAndRemove(req.params._id)
-        .then((removingMovie) => res.send({ removingMovie, message: 'Удалено' }));
+        .then((removingMovie) => res.send({ removingMovie, message: DELETED_MESSAGE }));
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        return next(new BadRequestError('Переданы некорректные данные при удалении фильма.'));
+        return next(new BadRequestError(BAD_REQUEST_TEXT));
       }
       return next(err);
     });

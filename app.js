@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -8,10 +9,11 @@ const cors = require('./middlewares/cors');
 const { errorHandler } = require('./utils/errorHandler');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { baseUrl } = require('./utils/constants');
 
 const { PORT = 3001, MONGO_URL, NODE_ENV } = process.env;
 
-mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : 'mongodb://localhost:27017/bitfilmsdb');
+mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : baseUrl, { useNewUrlParser: true });
 
 const app = express();
 
