@@ -9,6 +9,7 @@ const cors = require('./middlewares/cors');
 const { errorHandler } = require('./utils/errorHandler');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const limiter = require('./middlewares/limiter');
 const { baseUrl } = require('./utils/constants');
 
 const { PORT = 3001, MONGO_URL, NODE_ENV } = process.env;
@@ -22,12 +23,7 @@ app.use(bodyParser.json());
 app.use(cors);
 app.use(helmet());
 app.use(requestLogger);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+app.use(limiter);
 
 app.use(routes);
 

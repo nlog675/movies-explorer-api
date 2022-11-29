@@ -14,7 +14,7 @@ const getMovies = (req, res, next) => Movie.find({})
   .then((movies) => {
     res.status(200).send(movies);
   })
-  .catch((err) => next(err));
+  .catch(next);
 
 const createMovie = (req, res, next) => {
   const {
