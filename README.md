@@ -1,3 +1,3 @@
 # movies-explorer-api
 
-https://diploma-movies.nomoredomains.club
+https://api.diploma-movies.nomoredomains.club
