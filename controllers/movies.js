@@ -64,7 +64,7 @@ const deleteMovie = (req, res, next) => {
       if (movie.owner.toHexString() !== req.user._id) {
         throw new ForbiddenError(NOT_ALLOWED_TEXT);
       }
-      Movie.findByIdAndRemove(req.params._id)
+      return movie.remove()
         .then((removingMovie) => res.send({ removingMovie, message: DELETED_MESSAGE }));
     })
     .catch((err) => {

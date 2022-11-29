@@ -42,6 +42,8 @@ const updateProfile = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError(BAD_REQUEST_TEXT));
+      } if (err.code === 11000) {
+        return next(new ConflictError(ALREADY_EXISTS));
       }
       return next(err);
     });
