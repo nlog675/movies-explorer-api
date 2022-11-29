@@ -1,4 +1,3 @@
-module.exports.URL_REGEXP = /^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*/;
 module.exports.baseUrl = 'mongodb://localhost:27017/bitfilmsdb';
 module.exports.key = 'some-secret-key';
 module.exports.BAD_REQUEST_TEXT = 'Переданы некорректные данные.';
