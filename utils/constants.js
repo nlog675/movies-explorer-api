@@ -1,0 +1,15 @@
+module.exports.baseUrl = 'mongodb://localhost:27017/bitfilmsdb';
+module.exports.key = 'some-secret-key';
+module.exports.BAD_REQUEST_TEXT = 'Переданы некорректные данные.';
+module.exports.NOT_ALLOWED_TEXT = 'Недостаточно прав';
+module.exports.NOT_FOUND_ID_TEXT = 'Указанный _id не найден.';
+module.exports.ALREADY_EXISTS = 'Пользователь с таким email уже зарегистрирован.';
+module.exports.UNAUTHORIZED_TEXT = 'Неправильный логин или пароль.';
+module.exports.NEEDS_AUTH = 'Необходима авторизация.';
+module.exports.PAGE_NOT_FOUND = 'Такой страницы не существует.';
+module.exports.DELETED_MESSAGE = 'Удалено.';
+module.exports.SUCCESSFUL_AUTH = 'Авторизация прошла успешно.';
+module.exports.SUCCESSFUL_LOGOUT = 'Успешный выход.';
+module.exports.NOT_VALID_LINK = 'Невалидная ссылка.';
+module.exports.NOT_VALID_EMAIL = 'Некорректные данные email.';
+module.exports.SERVER_ERROR = 'Ошибка сервера.';
