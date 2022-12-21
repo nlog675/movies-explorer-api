@@ -3,12 +3,6 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../utils/BadRequestError');
 const NotFoundError = require('../utils/NotFoundError');
 const ForbiddenError = require('../utils/ForbiddenError');
-const {
-  BAD_REQUEST_TEXT,
-  NOT_ALLOWED_TEXT,
-  NOT_FOUND_ID_TEXT,
-  DELETED_MESSAGE,
-} = require('../utils/constants');
 
 const getMovies = (req, res, next) => Movie.find({})
   .then((movies) => {
@@ -47,11 +41,12 @@ const createMovie = (req, res, next) => {
     .then((movie) => {
       res.send(movie);
     })
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError(BAD_REQUEST_TEXT));
+        return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -59,19 +54,20 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError(NOT_FOUND_ID_TEXT);
+        throw new NotFoundError('Фильм с указанным _id не найден.');
       }
       if (movie.owner.toHexString() !== req.user._id) {
-        throw new ForbiddenError(NOT_ALLOWED_TEXT);
+        throw new ForbiddenError('Недостаточно прав');
       }
-      return movie.remove()
-        .then((removingMovie) => res.send({ removingMovie, message: DELETED_MESSAGE }));
+      Movie.findByIdAndRemove(req.params._id)
+        .then((removingMovie) => res.send({ removingMovie, message: 'Удалено' }));
     })
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        return next(new BadRequestError(BAD_REQUEST_TEXT));
+        return next(new BadRequestError('Переданы некорректные данные при удалении фильма.'));
       }
-      return next(err);
+      next(err);
     });
 };
 

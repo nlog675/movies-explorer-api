@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { NOT_VALID_LINK } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -28,7 +27,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (link) => validator.isURL(link, { protocols: ['http', 'https'], require_protocol: true }),
-      message: NOT_VALID_LINK,
+      message: 'Невалидная ссылка image',
     },
   },
   trailerLink: {
@@ -36,7 +35,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (link) => validator.isURL(link, { protocols: ['http', 'https'], require_protocol: true }),
-      message: NOT_VALID_LINK,
+      message: 'Невалидная ссылка trailerLink',
     },
   },
   thumbnail: {
@@ -44,7 +43,7 @@ const movieSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (link) => validator.isURL(link, { protocols: ['http', 'https'], require_protocol: true }),
-      message: NOT_VALID_LINK,
+      message: 'Невалидная ссылка thumbnail',
     },
   },
   owner: {

@@ -7,15 +7,6 @@ const NotFoundError = require('../utils/NotFoundError');
 const BadRequestError = require('../utils/BadRequestError');
 const ConflictError = require('../utils/ConflictError');
 const UnauthorizedError = require('../utils/UnauthorizedError');
-const { key } = require('../utils/constants');
-const {
-  ALREADY_EXISTS,
-  NOT_FOUND_ID_TEXT,
-  BAD_REQUEST_TEXT,
-  UNAUTHORIZED_TEXT,
-  SUCCESSFUL_AUTH,
-  SUCCESSFUL_LOGOUT,
-} = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -25,7 +16,7 @@ const getUser = (req, res, next) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError(NOT_FOUND_ID_TEXT);
+        throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
     })
     .catch((err) => next(err));
@@ -36,16 +27,15 @@ const updateProfile = (req, res, next) => {
 
   User.findByIdAndUpdate({ _id: req.user._id }, { name, email }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new NotFoundError(NOT_FOUND_ID_TEXT);
+      throw new NotFoundError('Пользователь с указанным _id не найден.');
     })
     .then((updatedUser) => res.send(updatedUser))
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError(BAD_REQUEST_TEXT));
-      } if (err.code === 11000) {
-        return next(new ConflictError(ALREADY_EXISTS));
+        return next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -62,14 +52,15 @@ const createUser = (req, res, next) => {
       delete newUser.password;
       return res.status(201).send(newUser);
     })
+    // eslint-disable-next-line consistent-return
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError(BAD_REQUEST_TEXT));
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
-        return next(new ConflictError(ALREADY_EXISTS));
+        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
       }
-      return next(err);
+      next(err);
     });
 };
 
@@ -78,30 +69,30 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError(UNAUTHORIZED_TEXT);
+        throw new UnauthorizedError('Неправильный логин или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new UnauthorizedError(UNAUTHORIZED_TEXT);
+            throw new UnauthorizedError('Неправильный логин или пароль');
           }
           const token = jwt.sign(
             { _id: user._id },
-            NODE_ENV === 'production' ? JWT_SECRET : key,
+            NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
             { expiresIn: '7d' },
           );
           res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
           })
-            .send({ email, message: SUCCESSFUL_AUTH });
+            .send({ email, message: 'Авторизация прошла успешно' });
         });
     })
     .catch(next);
 };
 
 const logout = (req, res, next) => {
-  res.clearCookie('jwt').send({ message: SUCCESSFUL_LOGOUT })
+  res.clearCookie('jwt').send({ message: 'Успешный выход' })
     .catch((err) => {
       next(err);
     });
