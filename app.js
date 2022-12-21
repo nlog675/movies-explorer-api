@@ -1,22 +1,27 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
+const cors = require('./middlewares/cors');
 const { errorHandler } = require('./utils/errorHandler');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/limiter');
 const { baseUrl } = require('./utils/constants');
 
-const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
+const { PORT = 3001, MONGO_URL, NODE_ENV } = process.env;
 
-mongoose.connect(MONGO_URL);
+mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : baseUrl, { useNewUrlParser: true });
 
 const app = express();
 
 app.use(cookieParser());
 app.use(bodyParser.json());
+app.use(cors);
+app.use(helmet());
 app.use(requestLogger);
 app.use(limiter);
 
@@ -27,6 +32,5 @@ app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });
