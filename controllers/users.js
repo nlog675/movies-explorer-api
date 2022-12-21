@@ -28,7 +28,7 @@ const getUser = (req, res, next) => {
         throw new NotFoundError(NOT_FOUND_ID_TEXT);
       }
     })
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 const updateProfile = (req, res, next) => {
@@ -102,7 +102,9 @@ const login = (req, res, next) => {
 
 const logout = (req, res, next) => {
   res.clearCookie('jwt').send({ message: SUCCESSFUL_LOGOUT })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
 
 module.exports = {
