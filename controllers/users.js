@@ -19,7 +19,7 @@ const getUser = (req, res, next) => {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 const updateProfile = (req, res, next) => {
@@ -92,10 +92,8 @@ const login = (req, res, next) => {
 };
 
 const logout = (req, res, next) => {
-  res.clearCookie('jwt').send({ message: 'Успешный выход' })
-    .catch((err) => {
-      next(err);
-    });
+  res.clearCookie('jwt').send({ message: SUCCESSFUL_LOGOUT })
+    .catch(next);
 };
 
 module.exports = {
