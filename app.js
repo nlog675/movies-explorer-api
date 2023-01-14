@@ -10,11 +10,11 @@ const { errorHandler } = require('./utils/errorHandler');
 const routes = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/limiter');
-const { baseUrl } = require('./utils/constants');
+// const { baseUrl } = require('./utils/constants');
 
-const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb', NODE_ENV } = process.env;
+const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb' } = process.env;
 
-mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : baseUrl, { useNewUrlParser: true });
+mongoose.connect(MONGO_URL);
 
 const app = express();
 
