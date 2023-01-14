@@ -12,7 +12,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const limiter = require('./middlewares/limiter');
 const { baseUrl } = require('./utils/constants');
 
-const { PORT = 3001, MONGO_URL, NODE_ENV } = process.env;
+const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/bitfilmsdb', NODE_ENV } = process.env;
 
 mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : baseUrl, { useNewUrlParser: true });
 
