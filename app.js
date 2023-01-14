@@ -20,7 +20,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(cors);
+// app.use(cors);
 app.use(helmet());
 app.use(requestLogger);
 app.use(limiter);
