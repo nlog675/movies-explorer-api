@@ -1,6 +1,7 @@
 const allowedCors = [
   'https://movie-explorer-nlog.nomoredomains.rocks',
   'http://movie-explorer-nlog.nomoredomains.rocks',
+  'movie-explorer-nlog.nomoredomains.rocks',
   'http://localhost:3000',
   'https://localhost:3000',
 ];
